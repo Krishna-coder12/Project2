@@ -1,13 +1,19 @@
-var template = 'My favorite month is {{month}} but not the day {{day}} or the year {{year}}';
-var dateTemplate = new TemplateProcessor(template);
+"use strict";
+function TemplateProcessor(template){
+    this.template = template;
+}
 
-var dictionary = {month: 'July', day: '1', year: '2016'};
-var str = dateTemplate.fillIn(dictionary);
+TemplateProcessor.prototype.fillIn = function (dictionary) {
+    const regex = /\{\{([^{}]+?)\}\}/g;
 
-assert(str === 'My favorite month is July but not the day 1 or the year 2016');
+    // Replace properties in the template using a callback function
+    const finalTemplate = this.template.replace(regex, function (match, property) {
+        if (dictionary[property] !== null && typeof (dictionary[property]) !== "undefined") {
+            return dictionary[property];
+        } else {
+            return '';
+        }
+    });
 
-//Case: property doesn't exist in dictionary
-var dictionary2 = {day: '1', year: '2016'};
-var str = dateTemplate.fillIn(dictionary2);
-
-assert(str === 'My favorite month is  but not the day 1 or the year 2016');
+    return finalTemplate;
+};
